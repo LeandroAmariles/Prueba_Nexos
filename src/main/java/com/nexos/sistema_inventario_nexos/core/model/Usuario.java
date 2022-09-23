@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,6 +25,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Setter
@@ -42,14 +44,18 @@ public class Usuario implements Auditable {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name="nombre")
+    @Column(name="nombre", nullable = false, updatable = false)
     private String nombre;
 
-    @Column(name="edad")
+    @Column(name="edad", nullable = false, updatable = false)
     private Integer edad;
 
+    @Column(name = "fecha_ingreso", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime fechaIngreso;
+
     @OneToOne(cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "cargo_id", referencedColumnName = "cargo_id")
+    @JoinColumn(name = "cargo_id", referencedColumnName = "cargo_id", nullable = false)
     @ToString.Exclude
     private Cargo cargo;
 

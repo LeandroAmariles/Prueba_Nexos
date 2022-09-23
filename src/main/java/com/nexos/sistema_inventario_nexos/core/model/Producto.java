@@ -46,7 +46,6 @@ public class Producto implements Auditable {
     @Column(name = "cantidad", nullable = false)
     private Integer cantidad;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id",nullable = false)
     @ToString.Exclude

@@ -27,6 +27,12 @@ public class CargoServiceImpl implements CargoService {
         return cargoRepository.save(cargo).getId();
     }
 
+    @Override
+    @Transactional
+    public void deleteCargo(Long id) {
+        cargoRepository.findById(id).ifPresent(cargoRepository ::delete);
+    }
+
     private Boolean existsCargo(String nombre){
         return cargoRepository.existsByNombre(nombre);
     }

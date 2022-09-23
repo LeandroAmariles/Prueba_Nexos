@@ -45,4 +45,5 @@ public class Cargo implements Auditable {
     @Embedded
     private Audit audit;
 
+
 }
