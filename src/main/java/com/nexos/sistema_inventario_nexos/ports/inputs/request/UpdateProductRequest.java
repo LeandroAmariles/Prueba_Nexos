@@ -1,6 +1,5 @@
 package com.nexos.sistema_inventario_nexos.ports.inputs.request;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,17 +14,13 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateProductoRequest {
+public class UpdateProductRequest {
 
-    @NotNull
-    @JsonProperty("nombre")
-    private String nombre;
 
-    @NotNull
     @JsonProperty("cantidad")
     private Integer cantidad;
 
-    @NotNull
+
     @DateTimeFormat(
             iso = DateTimeFormat.ISO.DATE_TIME
     )

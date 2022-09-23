@@ -6,7 +6,6 @@ import com.nexos.sistema_inventario_nexos.ports.inputs.api.UsuarioApi;
 import com.nexos.sistema_inventario_nexos.ports.inputs.mapper.UsuarioMapper;
 import com.nexos.sistema_inventario_nexos.ports.inputs.request.UsuarioRequest;
 import com.nexos.sistema_inventario_nexos.ports.inputs.response.UsuarioResponse;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +29,10 @@ public class UsuarioController implements UsuarioApi {
 
 
     @Override
-    @PostMapping("/{id}")
-    public ResponseEntity<UsuarioResponse> addNewUser(@Valid @RequestBody UsuarioRequest request, @PathVariable Long id) {
+    @PostMapping("/{id_cargo}")
+    public ResponseEntity<UsuarioResponse> addNewUser(@Valid @RequestBody UsuarioRequest request, @PathVariable Long id_cargo) {
         Usuario usuario = usuarioMapper.usuarioRequestToEntity(request);
-        usuarioService.crearUsuario(usuario, id);
+        usuarioService.crearUsuario(usuario, id_cargo);
         UsuarioResponse usuarioR = usuarioMapper.entityToUserResponse(usuario);
         return new ResponseEntity<>(usuarioR, HttpStatus.CREATED);
     }

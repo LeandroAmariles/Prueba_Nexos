@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -22,6 +23,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 
 @Setter
@@ -45,6 +47,10 @@ public class Producto implements Auditable {
 
     @Column(name = "cantidad", nullable = false)
     private Integer cantidad;
+
+    @Column(name = "fecha_ingreso", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime fechaIngreso;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id",nullable = false)
