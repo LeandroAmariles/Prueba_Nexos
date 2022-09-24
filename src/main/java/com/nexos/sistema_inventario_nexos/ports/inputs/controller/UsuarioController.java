@@ -2,6 +2,7 @@ package com.nexos.sistema_inventario_nexos.ports.inputs.controller;
 
 import com.nexos.sistema_inventario_nexos.core.model.Usuario;
 import com.nexos.sistema_inventario_nexos.core.usecase.UsuarioService;
+import com.nexos.sistema_inventario_nexos.ports.inputs.api.ApiConstants;
 import com.nexos.sistema_inventario_nexos.ports.inputs.api.UsuarioApi;
 import com.nexos.sistema_inventario_nexos.ports.inputs.mapper.UsuarioMapper;
 import com.nexos.sistema_inventario_nexos.ports.inputs.request.UsuarioRequest;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping(ApiConstants.USUARIOS_URI)
 @RequiredArgsConstructor
 public class UsuarioController implements UsuarioApi {
 

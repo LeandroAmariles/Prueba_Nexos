@@ -6,6 +6,8 @@ import com.nexos.sistema_inventario_nexos.ports.inputs.request.UpdateProductRequ
 import com.nexos.sistema_inventario_nexos.ports.inputs.response.ProductoResponse;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface ProductoMapper {
 
@@ -14,5 +16,7 @@ public interface ProductoMapper {
     ProductoResponse entityToResponse(Producto producto);
 
     Producto updateProductToEntity(UpdateProductRequest request);
+
+    List<ProductoResponse> productoListToProductoResponse(List<Producto> productoList);
 
 }

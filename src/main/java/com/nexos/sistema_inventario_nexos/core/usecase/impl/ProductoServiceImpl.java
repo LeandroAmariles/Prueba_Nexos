@@ -4,14 +4,19 @@ import com.nexos.sistema_inventario_nexos.config.exception.ConflictException;
 import com.nexos.sistema_inventario_nexos.config.exception.CreateException;
 import com.nexos.sistema_inventario_nexos.config.exception.NotFoundException;
 import com.nexos.sistema_inventario_nexos.core.model.Producto;
+import com.nexos.sistema_inventario_nexos.core.model.ProductoList;
 import com.nexos.sistema_inventario_nexos.core.repository.ProductoRepository;
 import com.nexos.sistema_inventario_nexos.core.repository.UsuarioRepository;
 import com.nexos.sistema_inventario_nexos.core.usecase.ProductoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +54,26 @@ public class ProductoServiceImpl implements ProductoService {
     public void borrarProducto(Long id) {
         productoRepository.findById(id).ifPresent(productoRepository::delete);
 
+    }
+
+    @Override
+    public ProductoList getList(PageRequest request) {
+        Page<Producto> page = productoRepository.findAll(request);
+        return new ProductoList(page.getContent(),request,page.getTotalElements());
+    }
+
+    @Override
+    public ProductoList getListNameFilter(PageRequest request, String nombre) {
+        Page<Producto> page = new PageImpl<>(productoRepository.findAll(request).stream().filter(producto ->
+                producto.getNombre().equalsIgnoreCase(nombre)).collect(Collectors.toList()));
+        return new ProductoList(page.getContent(),request, page.getTotalElements());
+    }
+
+    @Override
+    public ProductoList getListNameUserFilter(PageRequest request, String nombre) {
+        Page<Producto> page = new PageImpl<>(productoRepository.findAll(request).stream().filter(producto ->
+                producto.getUser().getNombre().equalsIgnoreCase(nombre)).collect(Collectors.toList()));
+        return new ProductoList(page.getContent(), request, page.getTotalElements());
     }
 
     private Boolean canCreate(String nombre, long id) {

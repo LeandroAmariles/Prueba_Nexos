@@ -2,6 +2,7 @@ package com.nexos.sistema_inventario_nexos.ports.inputs.controller;
 
 import com.nexos.sistema_inventario_nexos.core.model.Cargo;
 import com.nexos.sistema_inventario_nexos.core.usecase.CargoService;
+import com.nexos.sistema_inventario_nexos.ports.inputs.api.ApiConstants;
 import com.nexos.sistema_inventario_nexos.ports.inputs.api.CargoApi;
 import com.nexos.sistema_inventario_nexos.ports.inputs.mapper.CargoMapper;
 import com.nexos.sistema_inventario_nexos.ports.inputs.request.CreateCargoRequest;
@@ -21,7 +22,7 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/cargo")
+@RequestMapping(ApiConstants.CARGO_URI)
 @RequiredArgsConstructor
 public class CargoController implements CargoApi {
 
