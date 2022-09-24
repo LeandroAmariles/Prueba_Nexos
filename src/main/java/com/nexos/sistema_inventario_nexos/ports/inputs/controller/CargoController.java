@@ -6,10 +6,12 @@ import com.nexos.sistema_inventario_nexos.ports.inputs.api.ApiConstants;
 import com.nexos.sistema_inventario_nexos.ports.inputs.api.CargoApi;
 import com.nexos.sistema_inventario_nexos.ports.inputs.mapper.CargoMapper;
 import com.nexos.sistema_inventario_nexos.ports.inputs.request.CreateCargoRequest;
+import com.nexos.sistema_inventario_nexos.ports.inputs.response.CargoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +22,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(ApiConstants.CARGO_URI)
@@ -51,5 +55,13 @@ public class CargoController implements CargoApi {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCargo(@PathVariable  Long id) {
           cargoService.deleteCargo(id);
+    }
+
+    @Override
+    @GetMapping
+    public List<CargoResponse> getCargos() {
+        return cargoService.getCargo().stream().map((cargo)->
+                cargoMapper.entityToCargoResponse(cargo)).collect(Collectors.toList());
+
     }
 }

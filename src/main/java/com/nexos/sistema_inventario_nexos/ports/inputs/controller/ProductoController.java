@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,19 +50,19 @@ public class ProductoController implements ProductoApi {
     }
 
     @Override
-    @PatchMapping("/{id}")
-    public ResponseEntity<ProductoResponse> updateProduct(UpdateProductRequest request, Long id) {
+    @PatchMapping("/{id_producto}/{id_usuario}")
+    public ResponseEntity<ProductoResponse> updateProduct(@RequestBody UpdateProductRequest request, @PathVariable Long id_producto,@PathVariable Long id_usuario) {
         Producto producto = productoMapper.updateProductToEntity(request);
-        Producto productoR = productoService.actualizarProductoSiExiste(producto, id);
+        Producto productoR = productoService.actualizarProductoSiExiste(producto, id_producto,id_usuario);
 
         return new ResponseEntity<>(productoMapper.entityToResponse(productoR), HttpStatus.NO_CONTENT);
     }
 
     @Override
-    @DeleteMapping("/{producto_id}")
+    @DeleteMapping("/{producto_id}/{id_usuario}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void borrarProducto(@NotNull @PathVariable Long producto_id) {
-        productoService.borrarProducto(producto_id);
+    public void deleteProduct(@NotNull @PathVariable Long producto_id, @NotNull @PathVariable Long id_usuario) {
+        productoService.borrarProducto(producto_id, id_usuario);
     }
 
     @Override
@@ -157,6 +158,41 @@ public class ProductoController implements ProductoApi {
 
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Override
+    @GetMapping("/datefilter/{fecha}")
+    public ResponseEntity<ProductosResponseList> getProductoListDateFIlter(@RequestParam Optional<Integer> page,
+                                                                           @RequestParam Optional<Integer> size,
+                                                                           @PathVariable String fecha) {
+
+        final int pageNumber = page.filter(p -> p >0).orElse(ApiConstants.DEFAULT_PAGE);
+        final int pageSize = size.filter(s -> s > 0).orElse(ApiConstants.DEFAULT_SIZE);
+
+        ProductoList list = productoService.getListDateFilter(PageRequest.of(pageNumber,pageSize),fecha);
+
+        ProductosResponseList response;
+
+        {
+            response = new ProductosResponseList();
+
+            List<ProductoResponse> content = productoMapper.productoListToProductoResponse(list.getContent());
+
+            response.setContent(content);
+
+            final int nextPage = list.getPageable().next().getPageNumber();
+            response.setNextUri(ApiConstants.uriByPageAsString.apply(nextPage));
+
+            final int previousPage = list.getPageable().previousOrFirst().getPageNumber();
+            response.setPreviousUri(ApiConstants.uriByPageAsString.apply(previousPage));
+
+            response.setTotalPages(list.getTotalPages());
+            response.setTotalElements(list.getTotalElements());
+
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+
     }
 
 

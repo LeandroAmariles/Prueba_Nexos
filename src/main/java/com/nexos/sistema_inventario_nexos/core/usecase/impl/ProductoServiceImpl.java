@@ -1,5 +1,6 @@
 package com.nexos.sistema_inventario_nexos.core.usecase.impl;
 
+import com.nexos.sistema_inventario_nexos.config.exception.AuthenticationException;
 import com.nexos.sistema_inventario_nexos.config.exception.ConflictException;
 import com.nexos.sistema_inventario_nexos.config.exception.CreateException;
 import com.nexos.sistema_inventario_nexos.config.exception.NotFoundException;
@@ -29,7 +30,7 @@ public class ProductoServiceImpl implements ProductoService {
     @Transactional
     public Producto crearNuevoProducto(Producto producto, Long id_usuario) {
         if (!canCreate(producto.getNombre(), id_usuario)) {
-            throw new CreateException("Dont can creates a new product");
+            throw new CreateException("Dont can creates a new product, The user %s dont exist".formatted(id_usuario));
         }
         producto.setUser(usuarioRepository.findById(id_usuario).get());
         return productoRepository.save(producto);
@@ -38,11 +39,14 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional
-    public Producto actualizarProductoSiExiste(Producto producto, Long id) {
+    public Producto actualizarProductoSiExiste(Producto producto, Long id, Long id_usuario) {
         productoRepository.findById(id)
                 .map(PJpa -> {
                     Optional.ofNullable(producto.getCantidad()).ifPresent(PJpa::setCantidad);
                     Optional.ofNullable(producto.getFechaIngreso()).ifPresent(PJpa::setFechaIngreso);
+                    if(PJpa != producto) {
+                        PJpa.setUsuario_modifico(usuarioRepository.findById(id_usuario).get().getNombre());
+                    }
                     return productoRepository.save(PJpa);
                 }).orElseThrow(() -> new NotFoundException(id));
 
@@ -51,28 +55,42 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional
-    public void borrarProducto(Long id) {
+    public void borrarProducto(Long id,Long id_usuario) {
+        if(!AutenticarUsuario(id,id_usuario)){
+            throw new AuthenticationException("The user with id %s is not allowed to do this".formatted(id_usuario));
+        }
         productoRepository.findById(id).ifPresent(productoRepository::delete);
 
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductoList getList(PageRequest request) {
         Page<Producto> page = productoRepository.findAll(request);
         return new ProductoList(page.getContent(),request,page.getTotalElements());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductoList getListNameFilter(PageRequest request, String nombre) {
         Page<Producto> page = new PageImpl<>(productoRepository.findAll(request).stream().filter(producto ->
-                producto.getNombre().equalsIgnoreCase(nombre)).collect(Collectors.toList()));
+                producto.getNombre().startsWith(nombre)).collect(Collectors.toList()));
         return new ProductoList(page.getContent(),request, page.getTotalElements());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductoList getListNameUserFilter(PageRequest request, String nombre) {
         Page<Producto> page = new PageImpl<>(productoRepository.findAll(request).stream().filter(producto ->
-                producto.getUser().getNombre().equalsIgnoreCase(nombre)).collect(Collectors.toList()));
+                producto.getUser().getNombre().startsWith(nombre)).collect(Collectors.toList()));
+        return new ProductoList(page.getContent(), request, page.getTotalElements());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProductoList getListDateFilter(PageRequest request, String fecha) {
+        Page<Producto> page = new PageImpl<>(productoRepository.findAll(request).stream().filter(producto ->
+                producto.getFechaIngreso().toString().substring(0,10).startsWith(fecha)).collect(Collectors.toList()));
         return new ProductoList(page.getContent(), request, page.getTotalElements());
     }
 
@@ -82,6 +100,15 @@ public class ProductoServiceImpl implements ProductoService {
                     " or the user with id " + id + " dont exists");
         }
         return true;
+    }
+
+    private Boolean AutenticarUsuario(Long id_producto, Long id_usuario){
+        if(productoRepository.findById(id_producto).get().getUser().getNombre().equalsIgnoreCase(
+                usuarioRepository.findById(id_usuario).get().getNombre()
+        )){
+            return true;
+        }
+        return false;
     }
 
 

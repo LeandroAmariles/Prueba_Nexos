@@ -4,10 +4,13 @@ import com.nexos.sistema_inventario_nexos.config.exception.ConflictException;
 import com.nexos.sistema_inventario_nexos.core.model.Cargo;
 import com.nexos.sistema_inventario_nexos.core.repository.CargoRepository;
 import com.nexos.sistema_inventario_nexos.core.usecase.CargoService;
+import com.nexos.sistema_inventario_nexos.ports.inputs.response.CargoResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,12 @@ public class CargoServiceImpl implements CargoService {
     @Transactional
     public void deleteCargo(Long id) {
         cargoRepository.findById(id).ifPresent(cargoRepository ::delete);
+    }
+
+    @Override
+    public List<Cargo> getCargo() {
+        List<Cargo> list = cargoRepository.findAll();
+       return list;
     }
 
     private Boolean existsCargo(String nombre){

@@ -57,6 +57,9 @@ public class Producto implements Auditable {
     @ToString.Exclude
     private Usuario user;
 
+    @Column(name = "usuario_modifico", nullable = true)
+    private String usuario_modifico;
+
     @Embedded
     private Audit audit;
 

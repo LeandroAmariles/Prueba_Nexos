@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
@@ -30,8 +32,15 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    @Transactional
     public void borrarUsuario(Long id) {
         usuarioRepository.findById(id).ifPresent(usuarioRepository :: delete);
+    }
+
+    @Override
+    @Transactional
+    public List<Usuario> getUsers() {
+        return usuarioRepository.findAll();
     }
 
     private Boolean existUser(String nombre) {
