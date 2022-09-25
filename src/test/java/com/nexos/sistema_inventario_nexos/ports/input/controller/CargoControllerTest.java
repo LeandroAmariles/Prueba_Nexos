@@ -36,6 +36,7 @@ import java.util.Calendar;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,14 +57,14 @@ public class CargoControllerTest {
 
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(GlobalExceptionHandler.class)
                 .build();
     }
 
     @Test
-    void CreateCargo_shouldReturn201() throws Exception{
+    void CreateCargo_shouldReturn201() throws Exception {
 
         CreateCargoRequest request1 = CreateCargoRequest.builder()
                 .nombre("Test Admin")
@@ -72,10 +73,9 @@ public class CargoControllerTest {
         given(cargoService.createCargo(any(Cargo.class))).willReturn(99L);
 
 
-
         final String content1 = mockMvc.perform(post(ApiConstants.CARGO_URI)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(JsonUtils.objectToJson(request1)))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(JsonUtils.objectToJson(request1)))
                 .andExpect(status().isCreated())
                 .andDo(print())
                 .andReturn()
@@ -86,9 +86,13 @@ public class CargoControllerTest {
         assertThat(content1).isEqualTo("http://localhost/cargo/99");
 
 
+    }
 
-
-
+    @Test
+    void deleteCargo_shouldReturn204() throws Exception {
+        mockMvc.perform(delete(ApiConstants.CARGO_URI + "/1"))
+                .andExpect(status().isNoContent())
+                .andDo(print());
     }
 
 }

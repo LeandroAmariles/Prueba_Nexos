@@ -5,9 +5,11 @@ import com.nexos.sistema_inventario_nexos.config.exception.handler.GlobalExcepti
 import com.nexos.sistema_inventario_nexos.config.util.JsonUtils;
 import com.nexos.sistema_inventario_nexos.core.model.Cargo;
 import com.nexos.sistema_inventario_nexos.core.model.Usuario;
+import com.nexos.sistema_inventario_nexos.core.usecase.CargoService;
 import com.nexos.sistema_inventario_nexos.core.usecase.UsuarioService;
 import com.nexos.sistema_inventario_nexos.ports.inputs.api.ApiConstants;
 import com.nexos.sistema_inventario_nexos.ports.inputs.controller.UsuarioController;
+import com.nexos.sistema_inventario_nexos.ports.inputs.mapper.CargoMapper;
 import com.nexos.sistema_inventario_nexos.ports.inputs.mapper.UsuarioMapper;
 import com.nexos.sistema_inventario_nexos.ports.inputs.request.CreateCargoRequest;
 import com.nexos.sistema_inventario_nexos.ports.inputs.request.UsuarioRequest;
@@ -45,6 +47,12 @@ public class UsuarioControllerTest {
 
     @InjectMocks
     UsuarioController controller;
+
+    @Mock
+    UsuarioService usuarioService;
+
+    @Spy
+    UsuarioMapper mapper = Mappers.getMapper(UsuarioMapper.class);
 
 
     @BeforeEach
